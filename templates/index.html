@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Surveillance System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .features {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .feature-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .video-container {
+            width: 100%;
+            max-width: 800px;
+            margin: 20px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        #videoFeed {
+            width: 100%;
+            height: auto;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        input[type="file"] {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Surveillance System</h1>
+        
+        <div class="features">
+            <div class="feature-card">
+                <h2>Crowd Monitoring</h2>
+                <button onclick="startStream('crowd')">Start Monitoring</button>
+            </div>
+            
+            <div class="feature-card">
+                <h2>Missing Object Detection</h2>
+                <input type="file" id="objectImage" accept="image/*">
+                <button onclick="uploadObject()">Upload Object</button>
+                <button onclick="startStream('object')">Start Detection</button>
+            </div>
+            
+            <div class="feature-card">
+                <h2>Missing Person Detection</h2>
+                <input type="file" id="personImage" accept="image/*">
+                <button onclick="uploadPerson()">Upload Person</button>
+                <button onclick="startStream('person')">Start Detection</button>
+            </div>
+            
+            <div class="feature-card">
+                <h2>Criminal Detection</h2>
+                <input type="file" id="criminalImage" accept="image/*">
+                <input type="text" id="criminalName" placeholder="Criminal Name">
+                <button onclick="uploadCriminal()">Add to Database</button>
+                <button onclick="startStream('criminal')">Start Detection</button>
+            </div>
+        </div>
+        
+        <div class="video-container">
+            <img id="videoFeed" src="">
+        </div>
+    </div>
+
+    <script>
+        function startStream(mode) {
+            document.getElementById('videoFeed').src = `/video_feed/${mode}`;
+        }
+
+        async function uploadObject() {
+            const file = document.getElementById('objectImage').files[0];
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            await fetch('/upload_missing_object', {
+                method: 'POST',
+                body: formData
+            });
+        }
+
+        async function uploadPerson() {
+            const file = document.getElementById('personImage').files[0];
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            await fetch('/upload_missing_person', {
+                method: 'POST',
+                body: formData
+            });
+        }
+
+        async function uploadCriminal() {
+            const file = document.getElementById('criminalImage').files[0];
+            const name = document.getElementById('criminalName').value;
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('name', name);
+            
+            await fetch('/upload_criminal', {
+                method: 'POST',
+                body: formData
+            });
+        }
+    </script>
+</body>
+</html>
